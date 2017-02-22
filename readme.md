@@ -5,13 +5,35 @@ Created for originally AdoraStyle.ca for use with Snipcart webhook API running o
 Currently API queries Canada Post API with weight, origin postcode, and destination postcode for Expedited service, then returns that rate quote minus 
 the discount set in OS Env.
 
+ToDo:
+- Unit Tests
+- Improve Shipping Provider Error Handling
+- Improve Snipcart Error Handling
+
 Endpoint:
-https://9ve4yhnwxk.execute-api.us-east-1.amazonaws.com/prod/adoraShip
+https://xxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/snipcartWebhook
+
 Accepts:
-* POST should return 
+* POST should return "Expected JSON Response to Snipcart" as shown below.
 * GET should return "Nothing to see here. Your request works though!"
 
-AWS Lambda Config:
+AWS Lambda Deployment Config:
+
+* Runtime: Python 2.7
+* Handler: handler.Handle
+* Name: snipcartWebhook - by default the endpoint name is derived from this, see routes in `snipcartWebhook.go` to change
+* API Gateway: Open
+* Set Environmental Variables
+  * `Ship_Discount`
+  * `CAPost_CustNum`
+  * `CAPost_USER`
+  * `CAPost_PASS`
+  * `CAPost_URL` Default:(https://soa-gw.canadapost.ca/rs/ship/price)
+  * `ESHIP_USER`
+  * `ESHIP_PASS`
+  * `ESHIP_URL`
+
+
 
 
 
@@ -24,6 +46,18 @@ Third-Party Libraries:
  Expected JSON Response to Snipcart
  ```
 {"rates":[{"cost":10.1,"description":"Expedited Parcel","guaranteedDaysToDelivery":5}]}
+ ```
+
+ Error JSON Response to Snipcart *(Incomplete)*
+ ```
+{
+  "errors": [{
+    "key": "invalid_postal_code",
+    "message": "The postal code is invalid."
+    },
+    ...
+  ]
+}
  ```
 
  Snipcart Shipping Fetch JSON:
@@ -223,7 +257,7 @@ Third-Party Libraries:
       "taxes": [],
       "adjustedTotal": 0
     },
-    "ipAddress": "68.33.150.11"
+    "ipAddress": "68.00.150.101"
   }
 }
 ```

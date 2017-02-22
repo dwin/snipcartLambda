@@ -60,14 +60,7 @@ func handle(c *gin.Context) {
 	// Check Order Event Type
 	if order.EventName.(string) != "shippingrates.fetch" {
 		log.Println("Request does not contain 'eventName:shippingrates.Fetch'")
-		c.IndentedJSON(400, `{
-			"errors": [{
-				"key": "invalid_eventName",
-				"message": "Accepts Shipping Order Events Only."
-				},
-				...
-			]
-			}`)
+		c.String(400, "Accepts Shipping Order Events Only.")
 		return
 	}
 	log.Printf("Request Received for Invoice number %v", order.Content.InvoiceNumber)
@@ -79,10 +72,15 @@ func handle(c *gin.Context) {
 	if weight > 0.25 {
 		weight = 0.25
 	}
-	// Get Shipping Quote from Canada Post API
+	// Check Destination Country
 	if order.Content.ShippingAddressCountry != "CA" {
 		log.Printf("\nAttempting Canada Post Request, country is not Canada. Country: %v", order.Content.ShippingAddressCountry)
+		snipErr := new(provider.SnipcartShipError)
+		e := provider.ShipError{Key: "invalid_destination_country", Message: "Contact Support, Canada Post setup for Canada destinations only."}
+		snipErr.Errors = append(snipErr.Errors, e)
+		c.IndentedJSON(200, snipErr)
 	}
+	// Get Shipping Quote from Canada Post API
 	log.Printf("Received- Weight: %v Origin: %v Dest: %v", weight, originPostcode, destinationPostcode)
 	cPostRateQuote, err := provider.GetCanadaPostRate(weight, originPostcode, destinationPostcode)
 	if err != nil {

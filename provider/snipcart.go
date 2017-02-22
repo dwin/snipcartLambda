@@ -25,6 +25,14 @@ type Rate struct {
 	GuaranteedDaysToDelivery int     `json:"guaranteedDaysToDelivery,omitempty"`
 }
 
+type SnipcartShipError struct {
+	Errors []ShipError `json:"errors"`
+}
+type ShipError struct {
+	Key     string `json:"key"`
+	Message string `json:"message"`
+}
+
 type Order struct {
 	EventName interface{} `json:"eventName"`
 	Mode      string      `json:"mode"`
