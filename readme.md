@@ -5,6 +5,8 @@ AWS endpoint, should return shipping rate quote as JSON, as specified by Snipcar
 Currently API queries Canada Post API with weight, origin postcode, and destination postcode for Expedited service, then returns that rate quote minus 
 the discount set in OS Env.
 
+Run `$ make` in directory to create package.zip file for upload to AWS Lambda Console.
+
 __ToDo:__
 - Unit Tests
 - Improve Shipping Provider Error Handling
