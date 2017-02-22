@@ -1,23 +1,23 @@
-#####Adora Webhook - github.com/dsjr2006/snipcartWebhook
-Created for originally AdoraStyle.ca for use with Snipcart webhook API running on AWS Lambda. 'POST' containing Snipcart JSON with "eventName":"shippingrates.fetch" to
- https://9ve4yhnwxk.execute-api.us-east-1.amazonaws.com/prod/adoraShip, should return shipping rate quote as JSON, as specified by Snipcart API documentation.
+####Snipcart Webhook - github.com/dsjr2006/snipcartWebhook
+Created for originally AdoraStyle.ca for use with Snipcart webhook API running on AWS Lambda. 'POST' containing Snipcart JSON with "eventName":"shippingrates.fetch" to 
+AWS endpoint, should return shipping rate quote as JSON, as specified by Snipcart API documentation.
 
 Currently API queries Canada Post API with weight, origin postcode, and destination postcode for Expedited service, then returns that rate quote minus 
 the discount set in OS Env.
 
-ToDo:
+__ToDo:__
 - Unit Tests
 - Improve Shipping Provider Error Handling
 - Improve Snipcart Error Handling
 
-Endpoint:
+_Endpoint:_
 https://xxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/snipcartWebhook
 
-Accepts:
+_Accepts:_
 * POST should return "Expected JSON Response to Snipcart" as shown below.
 * GET should return "Nothing to see here. Your request works though!"
 
-AWS Lambda Deployment Config:
+__AWS Lambda Deployment Config:__
 
 * Runtime: Python 2.7
 * Handler: handler.Handle
@@ -37,18 +37,18 @@ AWS Lambda Deployment Config:
 
 
 
-Third-Party Libraries:  
+__Third-Party Libraries:__
 * aws-lambda-go-net  
    Used to implement Go shim for AWS Lambda which does not support Go as of 2017-02-15. https://github.com/eawsy/aws-lambda-go-net 
 * Gin  
    Gin is a high-performance HTTP web framework for Go. https://github.com/gin-gonic/gin
 
- Expected JSON Response to Snipcart
+ __Expected JSON Response to Snipcart__
  ```
 {"rates":[{"cost":10.1,"description":"Expedited Parcel","guaranteedDaysToDelivery":5}]}
  ```
 
- Error JSON Response to Snipcart *(Incomplete)*
+ __Error JSON Response to Snipcart__
  ```
 {
   "errors": [{
@@ -60,7 +60,7 @@ Third-Party Libraries:
 }
  ```
 
- Snipcart Shipping Fetch JSON:
+ __Snipcart Shipping Fetch JSON:__
    ```
    {
   "eventName": "shippingrates.fetch",
