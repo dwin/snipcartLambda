@@ -10,7 +10,7 @@ __ToDo:__
 - Improve Shipping Provider Error Handling
 - Improve Snipcart Error Handling
 
-_Endpoint:_
+_Endpoint:_ *(example only)  
 https://xxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/snipcartWebhook
 
 _Accepts:_
@@ -38,17 +38,17 @@ __AWS Lambda Deployment Config:__
 
 
 __Third-Party Libraries:__
-* aws-lambda-go-net  
+* _aws-lambda-go-net_
    Used to implement Go shim for AWS Lambda which does not support Go as of 2017-02-15. https://github.com/eawsy/aws-lambda-go-net 
-* Gin  
+* _Gin_
    Gin is a high-performance HTTP web framework for Go. https://github.com/gin-gonic/gin
 
- __Expected JSON Response to Snipcart__
+__Expected JSON Response to Snipcart__
  ```
 {"rates":[{"cost":10.1,"description":"Expedited Parcel","guaranteedDaysToDelivery":5}]}
  ```
 
- __Error JSON Response to Snipcart__
+__Error JSON Response to Snipcart__
  ```
 {
   "errors": [{
@@ -60,7 +60,7 @@ __Third-Party Libraries:__
 }
  ```
 
- __Snipcart Shipping Fetch JSON:__
+__Snipcart Shipping Fetch JSON:__
    ```
    {
   "eventName": "shippingrates.fetch",
