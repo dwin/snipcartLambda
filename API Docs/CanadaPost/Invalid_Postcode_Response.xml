@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messages xmlns="http://www.canadapost.ca/ws/messages">
+<message>
+<code>Server</code>
+<description>/rs/ship/price: cvc-simple-type 1: element {http://www.canadapost.ca/ws/ship/rate-v3}origin-postal-code value 'V2CKKK' is not a valid instance of type {http://www.canadapost.ca/ws/ship/rate-v3}PostalCodeType</description>
+</message>
+</messages>

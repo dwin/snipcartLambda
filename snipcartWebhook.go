@@ -79,12 +79,18 @@ func handle(c *gin.Context) {
 		e := provider.ShipError{Key: "invalid_destination_country", Message: "Contact Support, Canada Post setup for Canada destinations only."}
 		snipErr.Errors = append(snipErr.Errors, e)
 		c.IndentedJSON(200, snipErr)
+		return
 	}
 	// Get Shipping Quote from Canada Post API
 	log.Printf("Received- Weight: %v Origin: %v Dest: %v", weight, originPostcode, destinationPostcode)
 	cPostRateQuote, err := provider.GetCanadaPostRate(weight, originPostcode, destinationPostcode)
 	if err != nil {
 		log.Printf("Invalid Response from Canada Post API. Error: %v", err)
+		snipErr := new(provider.SnipcartShipError)
+		e := provider.ShipError{Key: "unexpected_response", Message: "Unexpected response from Canada Post API server, If this message continues please contact support."}
+		snipErr.Errors = append(snipErr.Errors, e)
+		c.IndentedJSON(200, snipErr)
+		return
 	}
 
 	shipDiscStr := os.Getenv("Ship_Discount") // Shipping discount must be set as OS Env Var ex. $ export Ship_Discount=5.00
@@ -107,6 +113,7 @@ func handle(c *gin.Context) {
 	if err != nil {
 		log.Printf("Error: %v", err)
 		c.Status(500)
+		return
 	}
 	c.JSON(200, q)
 	return

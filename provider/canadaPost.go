@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/xml"
+	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -36,6 +37,9 @@ $ export CAPost_URL=http://www.eshipper.com/rpc2
 $ export CAPost_CustNum=000
 */
 func GetCanadaPostRate(weight float64, destPostcode string, originPostcode string) (Rate, error) {
+
+	var cpRate Rate
+
 	// Encode API Credentials
 	username := os.Getenv("CAPost_USER")
 	password := os.Getenv("CAPost_PASS")
@@ -81,29 +85,30 @@ func GetCanadaPostRate(weight float64, destPostcode string, originPostcode strin
 	req.Header.Add("Content-Type", "application/vnd.cpc.ship.rate-v3+xml")
 	req.Header.Add("Accept", "application/vnd.cpc.ship.rate-v3+xml")
 	req.Header.Add("Accept-Language", "en-CA")
-	/*
-		requestDump, err := httputil.DumpRequest(req, true)
-		if err != nil {
-			log.Fatalf("Could not dump HTTP request. Error: %v", err)
-		}
-		fmt.Printf("\nRequest: %v\n", string(requestDump))
-	*/
+
 	log.Println("Sending Rate Request to Canada Post API")
 	resp, err := client.Do(req)
 	if err != nil {
-		log.Fatalf("Could not complete Rate Request. \nError: %v", err)
+		log.Println(err)
+		return cpRate, errors.New("Could not complete request to Canada Post API")
 	}
 
 	// Read XML Response from HTTP Body
 	xmlResp, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalf("Could not read HTTP response body. Error: %v", err)
+		log.Printf("Could not read HTTP response body. Error: %v", err)
+		return cpRate, err
+	}
+	if resp.StatusCode != 200 {
+		log.Printf("Canada Post API Error: HTTP Status %v, Body:\n%v", resp.StatusCode, string(xmlResp))
+		return cpRate, errors.New("Canada Post API Response of Unexpected Type")
 	}
 	var Quote PriceQuotes
 	err = xml.Unmarshal(xmlResp, &Quote)
 	if err != nil {
 		log.Printf("Body: %v", xmlResp)
-		log.Fatalf("Could not unmarshall response body. Error: %v", err)
+		log.Printf("Could not unmarshall response body. Error: %v", err)
+		return cpRate, err
 	}
 	log.Printf("CPost Quote - Due: %v ServiceName: %v Days to Delivery: %v", Quote.Due, Quote.ServiceName, Quote.ExpectedTransitTime)
 	// Check expected response?
@@ -112,11 +117,11 @@ func GetCanadaPostRate(weight float64, destPostcode string, originPostcode strin
 		if err != nil {
 			log.Fatalf("Could not dump HTTP response. Error: %v", err)
 		}
-		log.Fatalf("Unexpected response from Canada Post API.\nResponse:\n%v", string(responseDump))
+		log.Printf("Unexpected response from Canada Post API.\nResponse:\n%v", string(responseDump))
+		return cpRate, err
 	}
 
 	// Process and return rate
-	var cpRate Rate
 	cpRate.Cost = Quote.Due
 	cpRate.Description = Quote.ServiceName
 	cpRate.GuaranteedDaysToDelivery = Quote.ExpectedTransitTime
