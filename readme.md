@@ -1,4 +1,4 @@
-####Snipcart Webhook - github.com/dsjr2006/snipcartWebhook
+#### Snipcart Webhook - github.com/dsjr2006/snipcartWebhook
 Created for originally AdoraStyle.ca for use with Snipcart webhook API running on AWS Lambda. 'POST' containing Snipcart JSON with "eventName":"shippingrates.fetch" to 
 AWS endpoint, should return shipping rate quote as JSON, as specified by Snipcart API documentation.
 
